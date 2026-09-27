@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NGL SPAMMER v2 - FAST</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #0a0f18, #1a1f2e);
+            color: #fff;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container { max-width: 600px; margin: 0 auto; }
+        .header { text-align: center; margin-bottom: 30px; padding: 20px 0; }
+        .title {
+            font-size: 2.2rem;
+            font-weight: 700;
+            background: linear-gradient(45deg, #ff6b6b, #ffa500);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+        .subtitle { color: #ffb8b8; font-size: 0.95rem; }
+        .input-group { margin-bottom: 20px; }
+        .input-label { display: block; color: #ffb8b8; font-size: 14px; margin-bottom: 8px; }
+        .url-input {
+            width: 100%;
+            height: 56px;
+            background: linear-gradient(135deg, #010201, #0a0509);
+            border: 2px solid #ff6b6b;
+            border-radius: 10px;
+            padding: 0 20px;
+            font-size: 16px;
+            color: #fff;
+            transition: all 0.3s;
+        }
+        .url-input:focus {
+            outline: none;
+            box-shadow: 0 0 20px rgba(255, 107, 107, 0.5);
+            border-color: #ffa500;
+        }
+        .url-input::placeholder { color: rgba(184, 176, 184, 0.6); }
+        .action-btn {
+            width: 100%;
+            padding: 18px;
+            border: 3px solid #ff6b6b;
+            border-radius: 10px;
+            background: #000;
+            color: #fff;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s;
+            box-shadow: 0 0 10px #ff6b6b, inset 0 0 10px rgba(255, 107, 107, 0.3);
+        }
+        .action-btn:hover {
+            background: #ff6b6b;
+            color: #000;
+            box-shadow: 0 0 30px #ff6b6b, 0 0 60px #ff6b6b;
+            transform: translateY(-3px);
+        }
+        .action-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .stop-btn {
+            border-color: #ffa500;
+            box-shadow: 0 0 10px #ffa500, inset 0 0 10px rgba(255, 165, 0, 0.3);
+        }
+        .stop-btn:hover {
+            background: #ffa500;
+            box-shadow: 0 0 30px #ffa500, 0 0 60px #ffa500;
+        }
+        .progress-section {
+            background: rgba(48, 13, 13, 0.8);
+            border-radius: 15px;
+            padding: 20px;
+            border: 1px solid rgba(255, 107, 107, 0.4);
+            margin-top: 20px;
+            display: none;
+        }
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 107, 107, 0.3);
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(45deg, #ff6b6b, #ffa500);
+            transition: width 0.3s;
+            width: 0%;
+        }
+        .result-section {
+            background: rgba(48, 13, 13, 0.8);
+            border-radius: 15px;
+            padding: 20px;
+            border: 1px solid rgba(255, 107, 107, 0.4);
+            margin-top: 20px;
+            display: none;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .stat-item {
+            background: rgba(255, 107, 107, 0.1);
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .stat-value { font-size: 1.5rem; font-weight: 700; color: #ff6b6b; }
+        .stat-label { font-size: 0.8rem; color: #ffb8b8; }
+        .log-container {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            padding: 15px;
+            max-height: 250px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        .log-entry { padding: 4px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .log-success { color: #6bff87; }
+        .log-error { color: #ff6b6b; }
+        .log-info { color: #88aaff; }
+        .control-section { display: flex; gap: 10px; margin-top: 20px; }
+        .control-section .action-btn { flex: 1; }
+        .tips {
+            background: rgba(255, 107, 107, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            font-size: 14px;
+            border: 1px solid rgba(255, 107, 107, 0.3);
+        }
+        .tips h4 { color: #ff6b6b; margin-bottom: 8px; }
+        .tips ul { padding-left: 20px; }
+        .tips li { margin-bottom: 5px; }
+        .msg {
+            text-align: center;
+            font-size: 14px;
+            padding: 10px;
+            border-radius: 5px;
+            display: none;
+            margin-top: 10px;
+        }
+        .msg-error { color: #ff6b6b; background: rgba(255, 107, 107, 0.1); }
+        .msg-success { color: #6bff87; background: rgba(107, 255, 135, 0.1); }
+        @media (max-width: 480px) {
+            .title { font-size: 1.8rem; }
+            .stats-grid { grid-template-columns: 1fr; }
+            .control-section { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <header class="header">
+        <h1 class="title">NGL Spammer v2</h1>
+        <p class="subtitle">⚡ FAST MODE — 100% server-side, no CORS</p>
+    </header>
+
+    <div class="input-group">
+        <label class="input-label">Username NGL:</label>
+        <input type="text" id="nglUsername" placeholder="contoh: mamangracing55" class="url-input">
+    </div>
+    <div class="input-group">
+        <label class="input-label">Pesan:</label>
+        <input type="text" id="nglMessage" placeholder="contoh: Nak Duit" class="url-input">
+    </div>
+    <div class="input-group">
+        <label class="input-label">Jumlah Spam (1-1000):</label>
+        <input type="number" id="spamCount" placeholder="100" value="100" min="1" max="1000" class="url-input">
+    </div>
+    <button id="startBtn" class="action-btn">🚀 GAS SPAM!</button>
+    <div id="errorMsg" class="msg msg-error"></div>
+    <div id="successMsg" class="msg msg-success"></div>
+
+    <section id="progressSection" class="progress-section">
+        <div class="progress-info">
+            <span>Progress: <span id="progressText">0%</span></span>
+            <span><span id="currentCount">0</span> / <span id="totalCount">0</span></span>
+        </div>
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+    </section>
+
+    <section id="resultSection" class="result-section">
+        <div class="stats-grid">
+            <div class="stat-item">
+                <div class="stat-value" id="sentCount">0</div>
+                <div class="stat-label">Berhasil</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="errorCount">0</div>
+                <div class="stat-label">Gagal</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="totalSent">0</div>
+                <div class="stat-label">Total</div>
+            </div>
+        </div>
+        <div class="log-container" id="logContainer"></div>
+        <div class="control-section">
+            <button id="stopBtn" class="action-btn stop-btn">🛑 STOP</button>
+            <button id="clearBtn" class="action-btn">🧹 CLEAR</button>
+        </div>
+    </section>
+
+    <div class="tips">
+        <h4>💡 Upgrade v2:</h4>
+        <ul>
+            <li>✅ Server-side proxy (no CORS error)</li>
+            <li>✅ UUID valid untuk device ID</li>
+            <li>✅ Concurrent request (10x paralel)</li>
+            <li>✅ Delay adaptif anti rate-limit</li>
+            <li>🔥 Streaming log real-time</li>
+        </ul>
+    </div>
+</div>
+
+<script>
+class NGLSpammer {
+    constructor() {
+        this.isRunning = false;
+        this.sentCount = 0;
+        this.errorCount = 0;
+        this.currentRequest = 0;
+        this.targetCount = 0;
+        this.abortController = null;
+        this.initListeners();
+    }
+
+    initListeners() {
+        document.getElementById('startBtn').addEventListener('click', () => this.start());
+        document.getElementById('stopBtn').addEventListener('click', () => this.stop());
+        document.getElementById('clearBtn').addEventListener('click', () => this.clearLog());
+    }
+
+    async start() {
+        const username = document.getElementById('nglUsername').value.trim();
+        const message = document.getElementById('nglMessage').value.trim();
+        const count = parseInt(document.getElementById('spamCount').value);
+
+        if (!username || !message) return this.showError('Username dan pesan wajib diisi!');
+        if (!count || count < 1 || count > 1000) return this.showError('Jumlah harus 1-1000!');
+
+        this.isRunning = true;
+        this.targetCount = count;
+        this.currentRequest = 0;
+        this.sentCount = 0;
+        this.errorCount = 0;
+
+        this.hideError();
+        this.showSuccess(`Memulai ${count} spam ke @${username}...`);
+        document.getElementById('startBtn').disabled = true;
+        document.getElementById('resultSection').style.display = 'block';
+        document.getElementById('progressSection').style.display = 'block';
+        document.getElementById('logContainer').innerHTML = '';
+
+        this.updateCounters();
+        this.updateProgress();
+        this.addLog('🚀 Memulai spam...', 'info');
+
+        try {
+            this.abortController = new AbortController();
+            const res = await fetch('/api/spam', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username, message, count }),
+                signal: this.abortController.signal
+            });
+
+            const reader = res.body.getReader();
+            const decoder = new TextDecoder();
+            let buffer = '';
+
+            while (true) {
+                const { done, value } = await reader.read();
+                if (done) break;
+
+                buffer += decoder.decode(value, { stream: true });
+                const lines = buffer.split('\n');
+                buffer = lines.pop();
+
+                for (const line of lines) {
+                    if (!line.trim()) continue;
+                    try {
+                        const data = JSON.parse(line);
+                        if (data.type === 'success') {
+                            this.sentCount++;
+                            this.currentRequest++;
+                            this.addLog(`[${data.i}/${this.targetCount}] ✅ Berhasil`, 'success');
+                        } else if (data.type === 'error') {
+                            this.errorCount++;
+                            this.currentRequest++;
+                            this.addLog(`[${data.i}/${this.targetCount}] ❌ ${data.msg}`, 'error');
+                        } else if (data.type === 'done') {
+                            this.addLog(`🎉 SELESAI! ${data.success} berhasil, ${data.failed} gagal`, 'success');
+                        }
+                        this.updateCounters();
+                        this.updateProgress();
+                    } catch (e) {}
+                }
+            }
+        } catch (err) {
+            if (err.name === 'AbortError') {
+                this.addLog('🛑 Dihentikan oleh user', 'info');
+            } else {
+                this.addLog(`💥 Error: ${err.message}`, 'error');
+            }
+        }
+
+        this.isRunning = false;
+        document.getElementById('startBtn').disabled = false;
+    }
+
+    stop() {
+        this.isRunning = false;
+        if (this.abortController) this.abortController.abort();
+        document.getElementById('startBtn').disabled = false;
+    }
+
+    clearLog() {
+        document.getElementById('logContainer').innerHTML = '';
+        this.addLog('🧹 Log dibersihkan', 'info');
+    }
+
+    updateCounters() {
+        document.getElementById('sentCount').textContent = this.sentCount;
+        document.getElementById('errorCount').textContent = this.errorCount;
+        document.getElementById('totalSent').textContent = this.currentRequest;
+    }
+
+    updateProgress() {
+        const pct = this.targetCount ? (this.currentRequest / this.targetCount) * 100 : 0;
+        document.getElementById('progressFill').style.width = `${pct}%`;
+        document.getElementById('progressText').textContent = `${Math.round(pct)}%`;
+        document.getElementById('currentCount').textContent = this.currentRequest;
+        document.getElementById('totalCount').textContent = this.targetCount;
+    }
+
+    addLog(msg, type = 'info') {
+        const c = document.getElementById('logContainer');
+        const d = document.createElement('div');
+        d.className = `log-entry log-${type}`;
+        d.textContent = msg;
+        c.appendChild(d);
+        c.scrollTop = c.scrollHeight;
+    }
+
+    showError(m) {
+        const e = document.getElementById('errorMsg');
+        e.textContent = m;
+        e.style.display = 'block';
+        setTimeout(() => e.style.display = 'none', 4000);
+    }
+
+    showSuccess(m) {
+        const s = document.getElementById('successMsg');
+        s.textContent = m;
+        s.style.display = 'block';
+        setTimeout(() => s.style.display = 'none', 4000);
+    }
+
+    hideError() { document.getElementById('errorMsg').style.display = 'none'; }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    window.spammer = new NGLSpammer();
+    document.getElementById('nglUsername').focus();
+});
+</script>
+</body>
+</html>
